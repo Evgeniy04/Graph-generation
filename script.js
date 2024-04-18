@@ -12,6 +12,7 @@ function generate(event) {
     multipleEdgeGraph = formData.get("btncheckmultiples"),
     loopsGraph = formData.get("btncheckloops");
 
+  console.log(fullGraph);
   let adjacencyMatrix = fullGraph
     ? generateAdjacencyMatrixOfCompleteGraph(dimension)
     : generateAdjacencyMatrix(dimension);
@@ -152,7 +153,7 @@ function addMultipleEdges(matrix) {
     for (let j = 0; j < lim; j++) {
       const count = matrix[i][j];
       if (count <= 0) continue;
-      let randomNumber = Math.round(Math.random() * 2);
+      let randomNumber = Math.round(Math.random()) + 1;
       matrix[i][j] = randomNumber;
       matrix[j][i] = isDirected ? matrix[j][i] : randomNumber;
     }
