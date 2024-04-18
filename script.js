@@ -12,15 +12,12 @@ function generate(event) {
     multipleEdgeGraph = formData.get("btncheckmultiples"),
     loopsGraph = formData.get("btncheckloops");
 
-  console.log(fullGraph);
   let adjacencyMatrix = fullGraph
     ? generateAdjacencyMatrixOfCompleteGraph(dimension)
     : generateAdjacencyMatrix(dimension);
 
   // Параметр, определяющий тип графа (true - ориентированный, false - неориентированный)
-  console.log(adjacencyMatrix);
   isDirected = determineGraphType(adjacencyMatrix);
-  console.log(isDirected);
 
   // Добавляем к матрице кратные рёбра и/или петли
   adjacencyMatrix = multipleEdgeGraph
