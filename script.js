@@ -1,5 +1,6 @@
 const form = document.querySelector("form");
 form.addEventListener("submit", generate);
+let isDirected;
 
 function generate(event) {
   event.preventDefault();
@@ -14,6 +15,12 @@ function generate(event) {
   let adjacencyMatrix = fullGraph
     ? generateAdjacencyMatrixOfCompleteGraph(dimension)
     : generateAdjacencyMatrix(dimension);
+
+  // Параметр, определяющий тип графа (true - ориентированный, false - неориентированный)
+  console.log(adjacencyMatrix);
+  isDirected = determineGraphType(adjacencyMatrix);
+  console.log(isDirected);
+
   // Добавляем к матрице кратные рёбра и/или петли
   adjacencyMatrix = multipleEdgeGraph
     ? addMultipleEdges(adjacencyMatrix)
@@ -53,9 +60,6 @@ function generate(event) {
         ${contentAdjacencyMatrix}
         </tbody>`;
 
-  // Параметр, определяющий тип графа (true - ориентированный, false - неориентированный)
-  const isDirected = determineGraphType(adjacencyMatrix);
-
   // Создаем массив узлов и массив ребер на основе матрицы смежности
   let nodes = [];
   let edges = [];
@@ -67,11 +71,10 @@ function generate(event) {
     let lim = isDirected ? dimension : i + 1;
     for (let j = 0; j < lim; j++) {
       const count = adjacencyMatrix[i][j];
-      if (count > 0) {
-        for (let k = 0; k < count; k++) {
-          edges.push({ id: edgeCount, from: i, to: j, label: `e${edgeCount}` });
-          edgeCount++;
-        }
+      if (count <= 0) continue;
+      for (let k = 0; k < count; k++) {
+        edges.push({ id: edgeCount, from: i, to: j, label: `e${edgeCount}` });
+        edgeCount++;
       }
     }
   }
@@ -144,13 +147,16 @@ function generateAdjacencyMatrixOfCompleteGraph(n) {
 }
 // Добавить кратные рёбра
 function addMultipleEdges(matrix) {
-  matrix = matrix.map((_, i) =>
-    _.map((v, j) => {
-      if (i === j) return 0;
-      else if (v) return Math.round(Math.random() * 2);
-      return v;
-    })
-  );
+  for (let i = 0; i < matrix.length; i++) {
+    let lim = isDirected ? matrix.length : i + 1;
+    for (let j = 0; j < lim; j++) {
+      const count = matrix[i][j];
+      if (count <= 0) continue;
+      let randomNumber = Math.round(Math.random() * 2);
+      matrix[i][j] = randomNumber;
+      matrix[j][i] = isDirected ? matrix[j][i] : randomNumber;
+    }
+  }
 
   return matrix;
 }
