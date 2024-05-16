@@ -362,10 +362,10 @@ function findCentralAndPeripheralVertices(metricMatrix) {
       }
     }
     if (maxDistance === radius) {
-      peripheralVertices.push(i);
+      centralVertices.push(i);
     }
     if (maxDistance === diameter) {
-      centralVertices.push(i);
+      peripheralVertices.push(i);
     }
   }
 
