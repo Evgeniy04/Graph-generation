@@ -131,6 +131,47 @@ function generate(event) {
   const { centralVertices, peripheralVertices } = findCentralAndPeripheralVertices(metricMatrix);
   console.log("Центральные вершины:", centralVertices);
   console.log("Периферийные вершины:", peripheralVertices);
+
+  // 3 лаба
+  // Создать скелет графа
+  let skeletonAdjacencyMatrix = Array.from({ length: dimension }, () => Array.from({ length: dimension }, () => 0));
+  for (let i = 0; i < dimension; i++) {
+    for (let j = i + 1; j < dimension; j++) {
+      skeletonAdjacencyMatrix[i][j] = adjacencyMatrix[i][j] ? 1 : 0;
+      skeletonAdjacencyMatrix[j][i] = skeletonAdjacencyMatrix[i][j];
+    }
+  }
+  console.log(skeletonAdjacencyMatrix);
+  let skeletonEdges = [];
+  let skeletonEdgeCount = 0;
+  for (let i = 0; i < dimension; i++) {
+    // nodes.push({ id: i, label: String(i) });
+    for (let j = i; j < dimension; j++) {
+      const count = adjacencyMatrix[i][j];
+      if (count <= 0) continue;
+      for (let k = 0; k < count; k++) {
+        skeletonEdges.push({ id: skeletonEdgeCount, from: i, to: j, label: `e${skeletonEdgeCount}` });
+        skeletonEdgeCount++;
+      }
+    }
+  }
+
+  // Создаем матрицу инцидентности
+  const skeletonIncidenceMatrix = createIncidenceMatrix(skeletonAdjacencyMatrix, skeletonEdges);
+  let expression = "";
+  if (!skeletonAdjacencyMatrix.length) return;
+  for (let i = 0; i < skeletonIncidenceMatrix[0].length; i++) {
+    let str = "(";
+    for (let j = 0; j < skeletonIncidenceMatrix.length; j++) {
+      if (skeletonIncidenceMatrix[j][i] === 1) {
+        str += str.length === 1 ? `x${j} + ` : `x${j}`;
+      }
+    }
+    str += i === skeletonIncidenceMatrix[0].length - 1 ? ")" : ") * ";
+    expression += str;
+  }
+  console.log(skeletonIncidenceMatrix);
+  console.log(expression);
 }
 
 // Генерация матрицы смежности ориентированного графа без петель и кратных рёбер
